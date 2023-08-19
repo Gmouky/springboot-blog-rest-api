@@ -2,7 +2,6 @@ package com.springboot.blog.controller;
 
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,5 +26,10 @@ public class PostController {
     @GetMapping
     public ResponseEntity<List<PostDto>> getAllPosts() {
         return new ResponseEntity<>(postService.getAllPosts(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDto> getPostById(@PathVariable long id) {
+        return new ResponseEntity<>(postService.getPostById(id), HttpStatus.OK);
     }
 }
