@@ -11,4 +11,6 @@ public interface CommentService {
     List<CommentDto> getAllComment(long postId);
 
     CommentDto getCommentById(long postId, long commentId);
+
+    CommentDto updateComment(long postId, long commentId, CommentDto commentDto);
 }
