@@ -9,4 +9,6 @@ public interface CommentService {
     CommentDto createComment(long postId, CommentDto commentDto);
 
     List<CommentDto> getAllComment(long postId);
+
+    CommentDto getCommentById(long postId, long commentId);
 }
