@@ -33,8 +33,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto createPost(PostDto postDto) {
 
-        Category category = categoryRepository.findById(postDto.getCategoryId())
-                .orElseThrow(()-> new ResourceNotFoundException("category", "id", postDto.getCategoryId()));
+        Category category = getCategoryById(postDto);
 
         //convertDto to Entity
         Post post = mapDtoToEntity(postDto);
@@ -82,11 +81,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto updatePost(PostDto postDto, long id) {
+
+        Category category = getCategoryById(postDto);
+
         //get post by id from the database
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
         post.setContent(postDto.getContent());
+        post.setCategory(category);
 
         Post updatedPost = postRepository.save(post);
         return mapEntityToDto(updatedPost);
@@ -98,6 +101,19 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
+    @Override
+    public List<PostDto> getPostByCategory(Long categoryId) {
+
+        categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+
+        List<Post> posts = postRepository.findByCategoryId(categoryId);
+
+        return posts.stream()
+                .map(this::mapEntityToDto)
+                .collect(Collectors.toList());
+    }
+
     private Post mapDtoToEntity(PostDto postDto) {
         Post post = mapper.map(postDto, Post.class);
         return post;
@@ -106,5 +122,10 @@ public class PostServiceImpl implements PostService {
     private PostDto mapEntityToDto(Post post) {
         PostDto postDto = mapper.map(post, PostDto.class);
         return postDto;
+    }
+
+    private Category getCategoryById(PostDto postDto) {
+        return categoryRepository.findById(postDto.getCategoryId())
+                .orElseThrow(()-> new ResourceNotFoundException("category", "id", postDto.getCategoryId()));
     }
 }
