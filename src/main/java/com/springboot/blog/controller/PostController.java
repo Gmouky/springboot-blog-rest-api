@@ -1,7 +1,6 @@
 package com.springboot.blog.controller;
 
 import com.springboot.blog.dto.PostDto;
-import com.springboot.blog.dto.PostDtoV2;
 import com.springboot.blog.dto.PostResponse;
 import com.springboot.blog.service.PostService;
 import com.springboot.blog.utils.AppConstants;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -44,28 +42,10 @@ public class PostController {
     }
 
 
-    @GetMapping(value = "/api/posts/{id}", produces = "application/vnd.blog.v1+json")
+    @GetMapping(value = "/api/v1/posts/{id}")
     public ResponseEntity<PostDto> getPostByIdV1(@PathVariable long id) {
         return new ResponseEntity<>(postService.getPostById(id), HttpStatus.OK);
     }
-
-    @GetMapping(value = "/api/posts/{id}", produces = "application/vnd.blog.v2+json")
-    public ResponseEntity<PostDtoV2> getPostByIdV2(@PathVariable long id) {
-        PostDto postDto = postService.getPostById(id);
-        PostDtoV2 postDtoV2 = new PostDtoV2();
-        postDtoV2.setId(postDto.getId());
-        postDtoV2.setTitle(postDto.getTitle());
-        postDtoV2.setContent(postDto.getContent());
-        postDtoV2.setDescription(postDto.getDescription());
-        postDtoV2.setCategoryId(postDto.getCategoryId());
-        List<String> tags = new ArrayList<>();
-        tags.add("Java");
-        tags.add("Spring Boot");
-        tags.add("AWS");
-        postDtoV2.setTags(tags);
-        return new ResponseEntity<>(postDtoV2, HttpStatus.OK);
-    }
-
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/api/v1/posts/{id}")
